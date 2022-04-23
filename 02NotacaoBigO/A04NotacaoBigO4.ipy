@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 21 12:26:31 2022
+
+@author: vitu
+EXEMPLOS BIG-O
+"""
+
+# CONSTANT - O(1) ~> Constante independete no número de entradas (n)
+
+lista = [1, 2, 3, 4, 5] 
+
+def constant(n):
+    print(n[0])
+    print(n[1])
+
+#print(constant(lista))
+
+# Linear - O(n) ~> Proporcional ao número de entradas
+def linear(n):
+    for i in n:
+        print(i)
+        
+#linear(lista)
+
+# Quadratic - O(n^2) - polynomial
+
+def quadratic(n):
+    for i in n:
+        for j in n:
+            print(i, j)
+        print('----')
+
+# Combination
+# O(1) + O(5) + O(n) + O(n) + O(3)
+# O(9) + O(2n) ~> O(n) (Porque n == 'infinito', ou seja, O(2<infinito>) (duas vezes infinito não existe))
+def combination(n):
+    # O(1)
+    print(n[0])
+    
+    # O(5)
+    for i in range(5):
+        print('test', i)
+        
+    # O(n)
+    for i in n:
+        print(i)
+    
+    # O(n)
+    for i in n:
+        print(i)
+    
+    # O(3)
+    print('Python')
+    print('Python')
+    print('Python')
+
+combination(lista)

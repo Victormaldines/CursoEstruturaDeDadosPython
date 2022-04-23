@@ -1,0 +1,151 @@
+'''
+VETORES ORDENADOS
+DISCUSSÕES
+
+*  A principal vantagem é que os tempos de pesquisa são muito mais rápidos do que em um vetor não ordenado
+* A inserção leva mais tempo, pois os itens de dados devem ser movidos para criar espaço
+* As remoções são lentas tanto nos vetores ordenados quanto nos não ordenados, pois os itens devem ser movidos para preencher o 'buraco'
+* VETORES ORDENADOS SÃO ÚTEIS QUANDO PESQUISAS SÃO FREQUENTES, MAS INSERÇÕES E REMOÇÕES NÃO SÃO
+* Qual o tipo de vetor mais adequado para
+    * Um cadastro de funcionários? ~> Vetor Ordenado
+    * Um cadastro de produtos de uma loja de varejo? ~> Vetor Não-Ordenado
+'''
+import numpy as np
+
+class VetorNaoOrdenado:
+    def __init__(self, capacidade):
+        self.capacidade = capacidade
+        self.ultima_posicao = -1
+        self.valores = np.empty(self.capacidade, dtype=float)
+
+    def imprime(self):
+        if self.ultima_posicao == -1:
+            print('Vetor está vazio')
+        else:
+            for i in range(self.ultima_posicao+1):
+                print(self.valores[i])
+
+    def insere(self, valor):
+        self.valores[self.ultima_posicao+1] = valor
+        self.ultima_posicao += 1
+
+    def pesquisa(self, valor):
+        for i in range(self.ultima_posicao+1):
+            if valor == self.valores[i]:
+                return i
+        return -1
+
+    def exclui(self, valor):
+        posicao = self.pesquisa(valor)
+        if posicao == -1:
+            return 'Valor não existe no vetor'
+        for i in range(posicao, self.ultima_posicao):
+            self.valores[i] = self.valores[i+1]
+        self.ultima_posicao -= 1
+
+class VetorOrdenado:
+    def __init__(self, capacidade):
+        self.capacidade = capacidade
+        self.ultima_posicao = -1
+        self.valores = np.empty(self.capacidade, dtype=float)
+
+    def imprime(self):
+        if self.ultima_posicao == -1:
+            print('Vetor está vazio')
+        else:
+            for i in range(self.ultima_posicao+1):
+                print(self.valores[i])
+
+    def insere(self, valor):
+        if self.ultima_posicao == self.capacidade -1:
+            print('Capacidade máxima atingida')
+            return
+
+        posicao = 0
+        for i in range(self.ultima_posicao+1):
+            posicao = i
+            if valor < self.valores[i]:
+                break
+            if i == self.ultima_posicao:
+                posicao += 1
+
+        x = self.ultima_posicao
+        while x >= posicao:
+            self.valores[x+1] = self.valores[x]
+            x -= 1
+        self.valores[posicao] = valor
+        self.ultima_posicao += 1
+
+    def pesquisa_linear(self, valor):
+        for i in range(self.ultima_posicao+1):
+            if valor == self.valores[i]:
+                return valor
+            if valor < self.valores[i] or i == self.ultima_posicao:
+                return -1
+
+    def pesquisa_binaria(self, valor):
+        limite_inferior = 0
+        limite_superior = self.ultima_posicao
+
+        while True:
+            posicao_atual = int((limite_inferior + limite_superior) / 2)
+            if self.valores[posicao_atual] == valor:
+                return posicao_atual
+            elif limite_inferior > limite_superior:
+                return -1
+            else:
+                if self.valores[posicao_atual] < valor:
+                    limite_inferior = posicao_atual + 1
+                else:
+                    limite_superior = posicao_atual - 1
+
+    def exclui(self, valor):
+        posicao = self.pesquisa_binaria(valor)
+        if posicao == -1:
+            return -1
+        for i in range(posicao, self.ultima_posicao):
+            self.valores[i] = self.valores[i+1]
+        self.ultima_posicao -= 1
+
+# INSERÇÃO
+import random
+
+elementos = []
+for _ in range(10000):
+    elementos.append(round(random.random(), 4))
+
+def insere_nao_ordenado(lista):
+    vetor = VetorNaoOrdenado(len(lista)) 
+    for i in lista:
+        vetor.insere(i)
+    return vetor
+
+%timeit insere_nao_ordenado(elementos)
+
+def insere_ordenado(lista):
+    vetor = VetorOrdenado(len(lista))
+    for i in lista:
+        vetor.insere(i)
+    return vetor
+
+%timeit insere_ordenado(elementos)
+
+# PESQUISA
+vetor_nao_ordenado = insere_nao_ordenado(elementos)
+vetor_ordenado = insere_ordenado(elementos)
+    
+pesquisa = []
+for _ in range(10000):
+  pesquisa.append(round(random.random(), 4))
+
+def pesquisa_nao_ordenado(lista):
+  for i in lista:
+    vetor_nao_ordenado.pesquisa(i)
+    
+%timeit pesquisa_nao_ordenado(pesquisa)
+
+def pesquisa_ordenado_binaria(lista):
+  for i in lista:
+    vetor_ordenado.pesquisa_binaria(i)
+
+%timeit pesquisa_ordenado_binaria(pesquisa)
